@@ -1861,6 +1861,12 @@ String getEnvParamsStr() {
 }
 
 Boolean checkIfCodeUpdated() {
+    // PATCH: Shortcut to prevent unnecessary re-initialization and work queue buildup
+    state.pollBlocked = false
+    return false
+
+    /* 
+    // --- ORIGINAL CODE COMMENTED OUT ---
     Boolean codeUpdated; codeUpdated = false
     List chgs = []
     Map<String,String> codeVerMap; codeVerMap = (Map<String,String>)state.codeVersions ?: [:]
@@ -1938,6 +1944,8 @@ Boolean checkIfCodeUpdated() {
         state.pollBlocked = false
         return false
     }
+    // --- END ORIGINAL CODE ---
+    */
 }
 
 void postCodeUpdated() {
