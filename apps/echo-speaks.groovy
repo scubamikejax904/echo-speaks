@@ -4412,11 +4412,17 @@ void finishWorkQ(response, extData){
     releaseTheLock(sHMLF)
 
 //    if(!retry) {
-    extData?.extList?.each  { extItem ->
+    extData?.extList?.each { extItem ->
         if(extItem && (String)extItem.deviceId && (String)extItem.callback) {
-            if(extItem != null && statusCode==200) extItem["amznReqId"] = response?.headers["x-amz-rid"] ?: null
+            if(extItem != null && statusCode == 200) extItem["amznReqId"] = response?.headers["x-amz-rid"] ?: null
             def child = getChildDevice((String)extItem.deviceId)
-            child."${(String)extItem.callback}"(sData, statusCode, extItem)
+            
+            // PATCH: Explicitly handle 'finishSendSpeak' to bypass Hubitat's computed command security check
+            if ((String)extItem.callback == "finishSendSpeak") {
+                child.finishSendSpeak(sData, statusCode, extItem)
+            } else {
+                child."${(String)extItem.callback}"(sData, statusCode, extItem)
+            }
         }
     }
 //    }
